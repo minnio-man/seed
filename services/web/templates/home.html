@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>Web Frontend</title></head>
+  <body>
+    <h1>Django Frontend</h1>
+    <p>
+      <a href="/health/">Check API Health</a>
+    </p>
+    <form action="/sum/" method="get">
+      <label>A: <input type="number" step="any" name="a" value="2"></label>
+      <label>B: <input type="number" step="any" name="b" value="3"></label>
+      <button type="submit">Compute Sum (calls FastAPI)</button>
+    </form>
+    <hr>
+    <form action="/publish/" method="post">
+      {% csrf_token %}
+      <label>Text: <input type="text" name="text" placeholder="Enter message"></label>
+      <button type="submit">Publish Event (EventBridge → SQS)</button>
+    </form>
+  </body>
+</html>

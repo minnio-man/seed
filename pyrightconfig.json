@@ -1,0 +1,7 @@
+{
+  "include": ["packages", "services"],
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "standard",
+  "venvPath": ".venv",
+  "reportMissingTypeStubs": false
+}

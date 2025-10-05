@@ -1,0 +1,143 @@
+[
+  {
+    "name": "api_task",
+    "image": "${IMAGE}",
+    "essential": true,
+    "cpu": 512,
+    "memory": 1024,
+    "portMappings": [
+      {
+        "name": "service",
+        "containerPort": 9000,
+        "hostPort": 9000,
+        "protocol": "tcp"
+      }
+    ],
+    "healthCheck": {
+      "command": [
+        "CMD-SHELL",
+        "wget --quiet --tries=1 --spider http://localhost:9000/healthcheck || exit 1"
+      ]
+    },
+    "requiresCompatibilities": ["FARGATE"],
+    "environment": [
+      {
+        "name": "REDIS_HOST",
+        "value": "${REDIS_HOST}"
+      },
+      {
+        "name": "CREWVIA_ENV",
+        "value": "${CREWVIA_ENV}"
+      },
+      {
+        "name": "ACTION_EXECUTION_QUEUE",
+        "value": "${ACTION_EXECUTION_QUEUE}"
+      },
+      {
+        "name": "INGESTION_SPAWNER_QUEUE",
+        "value": "${INGESTION_SPAWNER_QUEUE}"
+      },
+      {
+        "name": "INGESTION_TASK_QUEUE",
+        "value": "${INGESTION_TASK_QUEUE}"
+      },
+      {
+        "name": "LANGCHAIN_TRACING_V2",
+        "value": "${LANGCHAIN_TRACING_V2}"
+      },
+      {
+        "name": "LOCAL_PDF_CONVERSION",
+        "value": "true"
+      },
+      {
+        "name": "API_EVENT_SOURCE",
+        "value": "${API_EVENT_SOURCE}"
+      },
+      {
+        "name": "CREWVIA_DOMAIN_EVENT_DETAIL_TYPE",
+        "value": "${CREWVIA_DOMAIN_EVENT_DETAIL_TYPE}"
+      },
+      {
+        "name": "CREWVIA_TRIGGER_EVENT_DETAIL_TYPE",
+        "value": "${CREWVIA_TRIGGER_EVENT_DETAIL_TYPE}"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "OPENAI_API_KEY",
+        "valueFrom": "${ENV_SECRET}:OPENAI_API_KEY::"
+      },
+      {
+        "name": "AUTH0_CLIENT_ID",
+        "valueFrom": "${ENV_SECRET}:AUTH0_CLIENT_ID::"
+      },
+      {
+        "name": "AUTH0_CLIENT_SECRET",
+        "valueFrom": "${ENV_SECRET}:AUTH0_CLIENT_SECRET::"
+      },
+      {
+        "name": "AUTH0_SECRET",
+        "valueFrom": "${ENV_SECRET}:AUTH0_SECRET::"
+      },
+      {
+        "name": "AUTH0_ISSUER_BASE_URL",
+        "valueFrom": "${ENV_SECRET}:AUTH0_ISSUER_BASE_URL::"
+      },
+      {
+        "name": "AUTH0_BASE_URL",
+        "valueFrom": "${ENV_SECRET}:AUTH0_BASE_URL::"
+      },
+      {
+        "name": "AWS_ACCESS_KEY_ID",
+        "valueFrom": "${ENV_SECRET}:AWS_ACCESS_KEY_ID::"
+      },
+      {
+        "name": "AWS_SECRET_ACCESS_KEY",
+        "valueFrom": "${ENV_SECRET}:AWS_SECRET_ACCESS_KEY::"
+      },
+      {
+        "name": "AWS_REGION",
+        "valueFrom": "${ENV_SECRET}:AWS_REGION::"
+      },
+      {
+        "name": "POSTGRES_PRISMA_URL",
+        "valueFrom": "${ENV_SECRET}:POSTGRES_PRISMA_URL::"
+      },
+      {
+        "name": "S3_UPLOAD_BUCKET",
+        "valueFrom": "${ENV_SECRET}:S3_UPLOAD_BUCKET::"
+      },
+      {
+        "name": "LANGCHAIN_API_KEY",
+        "valueFrom": "${ENV_SECRET}:LANGCHAIN_API_KEY::"
+      },
+      {
+        "name": "NEW_RELIC_API_KEY",
+        "valueFrom": "${ENV_SECRET}:NEW_RELIC_API_KEY::"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awsfirelens",
+      "options": {
+        "Name": "newrelic"
+      },
+      "secretOptions": [
+        {
+          "name": "apiKey",
+          "valueFrom": "${ENV_SECRET}:NEW_RELIC_API_KEY::"
+        }
+      ]
+    }
+  },
+  {
+    "essential": true,
+    "image": "533243300146.dkr.ecr.ap-southeast-2.amazonaws.com/newrelic/logging-firelens-fluentbit",
+    "name": "log_router",
+    "firelensConfiguration": {
+      "type": "fluentbit",
+      "options": {
+        "enable-ecs-log-metadata": "true"
+      }
+    }
+  }
+]

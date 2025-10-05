@@ -1,0 +1,19 @@
+version = 1
+revision = 3
+requires-python = ">=3.11"
+
+[[package]]
+name = "data-io"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "util-math" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "util-math", directory = "../util_math" }]
+
+[[package]]
+name = "util-math"
+version = "0.1.0"
+source = { directory = "../util_math" }

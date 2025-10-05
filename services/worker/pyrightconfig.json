@@ -1,0 +1,7 @@
+{
+  "include": ["worker"],
+  "pythonVersion": "3.12",
+  "venvPath": ".",
+  "venv": ".venv",
+  "typeCheckingMode": "standard"
+}

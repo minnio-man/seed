@@ -1,0 +1,96 @@
+# macOS
+.DS_Store
+
+# Editors/IDEs
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.env.*
+.envrc
+.venv/
+venv/
+ENV/
+env/
+
+# Packaging / build
+build/
+dist/
+downloads/
+wheels/
+*.egg-info/
+.eggs/
+*.egg
+share/python-wheels/
+sdist/
+lib/
+lib64/
+parts/
+var/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Test / coverage
+.tox/
+.nox/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.cache
+
+# Type checking / linters
+.mypy_cache/
+dmypy.json
+.dmypy.json
+.pyre/
+.pyright/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Django (web service)
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.*
+terraform.tfstate.d/
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.terragrunt-cache/
+
+# Node (if any tooling slips in)
+node_modules/
+
+
+# Local volumes (docker-compose data)
+volumes/
+
