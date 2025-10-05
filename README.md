@@ -103,41 +103,57 @@ The Terraform in `infra/` is written for AWS. Local development uses LocalStack;
 #### Networking diagram
 
 ```mermaid
-flowchart LR
-  Internet((Internet)) -->|HTTPS| ALB[ALB]
+flowchart TB
+  Internet["Internet"]
 
-  subgraph VPC[ VPC 10.0.0.0/16 ]
-    direction LR
+  subgraph VPC["VPC 10.0.0.0/16 (DNS enabled)"]
+    direction TB
 
-    subgraph PublicSubnets[Public Subnets]
-      PSa[Subnet A]
-      PSb[Subnet B]
+    IGW["Internet Gateway"]
+
+    %% Public tier
+    subgraph Public["Public subnets (default route to IGW)"]
+      direction LR
+      PubA["Public subnet A 10.0.0.0/26 (ap-southeast-2a)"]
+      PubB["Public subnet B 10.0.0.128/26 (ap-southeast-2b)"]
+      ALB["ALB (targets web on port 3000)"]
+      NAT["NAT Gateway (in PubA)"]
     end
 
-    subgraph PrivateSubnets[Private Subnets]
-      PRa[Subnet A]
-      PRb[Subnet B]
+    %% Private tier
+    subgraph Private["Private subnets (default route to NAT)"]
+      direction LR
+      PrivA["Private subnet A 10.0.129.0/26 (ap-southeast-2a)"]
+      PrivB["Private subnet B 10.0.129.128/26 (ap-southeast-2b)"]
+      APIA["API task on port 9000"]
+      APIB["API task on port 9000"]
     end
 
-    IGW[Internet Gateway]
-    NAT[NAT Gateway]
+    %% Web service
+    subgraph Web["Web service in private subnets"]
+      WebTasks["Web tasks on port 3000"]
+    end
 
-    ALB --- PSa
-    ALB --- PSb
-
-    Web[Web Service (Fargate, :3000, public IP)] --- PSa
-    Web --- PSb
-
-    API[API Service (Fargate, :9000, no public IP)] --- PRa
-    API --- PRb
-
-    PSa --> IGW
-    PSb --> IGW
-    PRa -->|0.0.0.0/0| NAT --> IGW
-    PRb -->|0.0.0.0/0| NAT
-
-    Web -->|Service Connect| API
+    %% Service Connect namespace
+    SCNS["ECS Service Connect namespace private.crewvia\nDNS inside Service Connect: api.private.crewvia on port 9000"]
   end
+
+  %% Internet to ALB
+  Internet --> IGW
+  Internet --> ALB
+
+  %% ALB to Web
+  ALB -->|targets port 3000| WebTasks
+
+  %% Web to API via Service Connect
+  WebTasks -->|HTTP to api.private.crewvia port 9000| SCNS
+  SCNS --> APIA
+  SCNS --> APIB
+
+  %% Routing
+  PrivA -->|default route to NAT| NAT
+  PrivB -->|default route to NAT| NAT
+  NAT -->|egress| IGW
 ```
 
 ### Utilities
